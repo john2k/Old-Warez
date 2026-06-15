@@ -1,0 +1,500 @@
+/* Retro Windows 95 Design System & CSS Stylesheet */
+
+@import url('https://fonts.googleapis.com/css2?family=MS+Sans+Serif:wght@400;700&family=VT323&family=Courier+Prime&family=Comic+Neue:wght@400;700&family=Times+New+Roman&display=swap');
+
+:root {
+  /* Win95 Classic Palette */
+  --win-bg: #008080; /* Classic Teal */
+  --win-gray: #c0c0c0; /* Standard Win95 Gray */
+  --win-white: #ffffff;
+  --win-dark-gray: #808080;
+  --win-black: #0a0a0a;
+  --win-blue: #000080;
+  --win-blue-light: #1084d0;
+  --win-text: #000000;
+  --win-disabled: #808080;
+  
+  /* Font Families */
+  --font-win: 'MS Sans Serif', -apple-system, sans-serif;
+  --font-crt: 'VT323', monospace;
+  --font-code: 'Courier New', Courier, monospace;
+
+  --theme-resolution: 640px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  image-rendering: pixelated;
+  user-select: none;
+}
+
+body {
+  background-color: #111;
+  color: var(--win-text);
+  font-family: var(--font-win);
+  font-size: 13px;
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #000;
+}
+
+/* CRT Screen Simulation Container */
+.crt-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  overflow: hidden;
+  background-color: #000;
+  display: flex;
+  flex-direction: column;
+  box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.9);
+}
+
+.crt-container.fullscreen {
+  width: 100vw;
+  height: 100vh;
+}
+
+/* CRT Scanlines, Dithering and Flicker Effects */
+.crt-container::before {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+  z-index: 9999;
+  background-size: 100% 4px, 6px 100%;
+  pointer-events: none;
+}
+
+.crt-container.scanlines-16::before {
+  background-size: 100% 6px, 8px 100%;
+}
+
+.crt-container::after {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+  background: rgba(18, 16, 16, 0.1);
+  opacity: 0;
+  z-index: 99999;
+  pointer-events: none;
+  animation: flicker 0.15s infinite;
+}
+
+@keyframes flicker {
+  0% { opacity: 0.27861; }
+  50% { opacity: 0.22; }
+  100% { opacity: 0.28; }
+}
+
+/* Video Card Resolution Simulator */
+.viewport {
+  width: 100%;
+  height: 100%;
+  background-color: var(--win-bg);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+/* SVGA & VGA Dithering Overlay */
+.dither-16 {
+  background-image: radial-gradient(rgba(0,0,0,0.15) 15%, transparent 15%);
+  background-size: 2px 2px;
+}
+
+/* Classic Win95 Bevel Effects */
+.win-outset {
+  border: 2px solid;
+  border-color: var(--win-white) var(--win-dark-gray) var(--win-dark-gray) var(--win-white);
+  box-shadow: inset 1px 1px 0px var(--win-white), inset -1px -1px 0px var(--win-black);
+}
+
+.win-inset {
+  border: 2px solid;
+  border-color: var(--win-dark-gray) var(--win-white) var(--win-white) var(--win-dark-gray);
+  box-shadow: inset 1px 1px 0px var(--win-black), inset -1px -1px 0px var(--win-gray);
+}
+
+.win-inset-shallow {
+  border: 1px solid;
+  border-color: var(--win-dark-gray) var(--win-white) var(--win-white) var(--win-dark-gray);
+}
+
+.win-outset-shallow {
+  border: 1px solid;
+  border-color: var(--win-white) var(--win-dark-gray) var(--win-dark-gray) var(--win-white);
+}
+
+/* Classic Win95 Scrollbars */
+::-webkit-scrollbar {
+  width: 16px;
+  height: 16px;
+  background-color: #dfdfdf;
+  background-image: 
+    linear-gradient(45deg, #c0c0c0 25%, transparent 25%, transparent 75%, #c0c0c0 75%, #c0c0c0),
+    linear-gradient(45deg, #c0c0c0 25%, transparent 25%, transparent 75%, #c0c0c0 75%, #c0c0c0);
+  background-size: 4px 4px;
+  background-position: 0 0, 2px 2px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--win-gray);
+  border: 2px solid;
+  border-color: var(--win-white) var(--win-dark-gray) var(--win-dark-gray) var(--win-white);
+  box-shadow: inset 1px 1px 0px var(--win-white), inset -1px -1px 0px var(--win-black);
+}
+
+::-webkit-scrollbar-button {
+  display: block;
+  background-color: var(--win-gray);
+  border: 2px solid;
+  border-color: var(--win-white) var(--win-dark-gray) var(--win-dark-gray) var(--win-white);
+  height: 16px;
+  width: 16px;
+}
+
+/* Windows 95 Button Styles */
+.win-btn {
+  background-color: var(--win-gray);
+  font-family: var(--font-win);
+  font-size: 12px;
+  padding: 4px 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: default;
+  outline: none;
+  border: 2px solid;
+  border-color: var(--win-white) var(--win-dark-gray) var(--win-dark-gray) var(--win-white);
+  box-shadow: inset 1px 1px 0px var(--win-white), inset -1px -1px 0px var(--win-black);
+}
+
+.win-btn:active, .win-btn.pressed {
+  border-color: var(--win-dark-gray) var(--win-white) var(--win-white) var(--win-dark-gray);
+  box-shadow: inset 1px 1px 0px var(--win-black);
+  padding: 5px 9px 3px 11px;
+}
+
+.win-btn[disabled] {
+  color: var(--win-disabled);
+  text-shadow: 1px 1px 0 var(--win-white);
+  box-shadow: none;
+}
+
+/* Windows 95 Window Frame */
+.win-window {
+  background-color: var(--win-gray);
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  min-width: 250px;
+  min-height: 150px;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.4);
+  z-index: 10;
+}
+
+.win-window.active-window {
+  z-index: 100;
+}
+
+.win-title-bar {
+  background: linear-gradient(90deg, var(--win-blue), var(--win-blue-light));
+  color: var(--win-white);
+  padding: 3px 4px;
+  font-weight: bold;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: move;
+}
+
+.win-window.inactive-window .win-title-bar {
+  background: linear-gradient(90deg, var(--win-dark-gray), #b0b0b0);
+  color: #d0d0d0;
+}
+
+.win-title-bar-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.win-title-bar-controls {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.win-title-btn {
+  width: 16px;
+  height: 14px;
+  font-size: 9px;
+  font-weight: bold;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.win-title-btn.close-btn {
+  font-family: Arial, sans-serif;
+  font-size: 11px;
+}
+
+.win-window-body {
+  flex: 1;
+  padding: 8px;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Form Inputs */
+.win-input {
+  background-color: var(--win-white);
+  color: var(--win-text);
+  font-family: var(--font-win);
+  font-size: 12px;
+  padding: 3px 5px;
+  outline: none;
+  border: 2px solid;
+  border-color: var(--win-dark-gray) var(--win-white) var(--win-white) var(--win-dark-gray);
+  box-shadow: inset 1px 1px 0px var(--win-black);
+}
+
+.win-input[readonly] {
+  background-color: #dfdfdf;
+  color: #606060;
+}
+
+/* Menu Bar */
+.win-menu-bar {
+  display: flex;
+  gap: 8px;
+  padding: 2px 4px;
+  border-bottom: 1px solid var(--win-dark-gray);
+  font-size: 11px;
+}
+
+.win-menu-item {
+  padding: 2px 6px;
+  cursor: default;
+}
+
+.win-menu-item:hover {
+  background-color: var(--win-blue);
+  color: var(--win-white);
+}
+
+/* Status Bar */
+.win-status-bar {
+  display: flex;
+  gap: 4px;
+  padding: 2px;
+  font-size: 11px;
+  margin-top: auto;
+}
+
+.win-status-panel {
+  flex: 1;
+  padding: 2px 6px;
+  border: 1px solid;
+  border-color: var(--win-dark-gray) var(--win-white) var(--win-white) var(--win-dark-gray);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Screen Melting Virus FX */
+.virus-melt {
+  filter: url('#melt-filter') blur(0.2px);
+  animation: melt-anim 4s infinite linear;
+}
+
+@keyframes melt-anim {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(3px) skewX(0.5deg); }
+  100% { transform: translateY(0px); }
+}
+
+/* Cascade Virus falling animation */
+.falling-letter {
+  position: absolute;
+  color: green;
+  font-family: var(--font-crt);
+  font-size: 20px;
+  pointer-events: none;
+  animation: fall 3s linear forwards;
+}
+
+@keyframes fall {
+  to {
+    transform: translateY(100vh);
+    opacity: 0;
+  }
+}
+
+/* Custom Cursors */
+body, button, input, select, textarea, .viewport, a, .win-menu-item {
+  cursor: url('https://raw.githubusercontent.com/trapd00r/win95-winxp_icons/master/cursors/arrow.cur'), default !important;
+}
+
+.win-title-bar, .win-title-bar-title, .win-window {
+  cursor: url('https://raw.githubusercontent.com/trapd00r/win95-winxp_icons/master/cursors/arrow.cur'), move !important;
+}
+
+.win-input, textarea {
+  cursor: text !important;
+}
+
+.win-btn, button {
+  cursor: url('https://raw.githubusercontent.com/trapd00r/win95-winxp_icons/master/cursors/arrow.cur'), default !important;
+}
+
+/* Wallpapers Patterns */
+.wallpaper-teal {
+  background-color: #008080 !important;
+  background-image: none !important;
+}
+
+.wallpaper-clouds {
+  background-color: #008080 !important;
+  background-image: url('https://raw.githubusercontent.com/trapd00r/win95-winxp_icons/master/wallpapers/clouds.png') !important;
+  background-repeat: repeat !important;
+  background-size: 250px 250px !important;
+}
+
+.wallpaper-bricks {
+  background-color: #800000 !important;
+  background-image: 
+    linear-gradient(90deg, #400000 2px, transparent 2px),
+    linear-gradient(0deg, #400000 2px, transparent 2px),
+    linear-gradient(90deg, #800000 2px, transparent 2px),
+    linear-gradient(0deg, #800000 2px, transparent 2px) !important;
+  background-size: 16px 16px, 16px 16px, 8px 8px, 8px 8px !important;
+}
+
+.wallpaper-houndstooth {
+  background-color: #c0c0c0 !important;
+  background-image: 
+    linear-gradient(45deg, #808080 25%, transparent 25%, transparent 75%, #808080 75%, #808080),
+    linear-gradient(45deg, #808080 25%, transparent 25%, transparent 75%, #808080 75%, #808080) !important;
+  background-size: 8px 8px !important;
+  background-position: 0 0, 4px 4px !important;
+}
+
+.wallpaper-matrix {
+  background-color: #000000 !important;
+  background-image: 
+    linear-gradient(rgba(0, 50, 0, 0.3) 50%, transparent 50%),
+    linear-gradient(90deg, rgba(0, 255, 0, 0.05) 50%, transparent 50%) !important;
+  background-size: 8px 8px !important;
+}
+
+/* Themes support */
+.viewport.theme-plum {
+  background-color: #400040 !important;
+  background-image: none !important;
+}
+.viewport.theme-plum .win-title-bar {
+  background: linear-gradient(90deg, #800040, #ff80c0) !important;
+  color: #fff !important;
+}
+.viewport.theme-desert {
+  background-color: #a08060 !important;
+  background-image: none !important;
+}
+.viewport.theme-desert .win-title-bar {
+  background: linear-gradient(90deg, #804000, #ffc080) !important;
+  color: #fff !important;
+}
+.viewport.theme-rose {
+  background-color: #800040 !important;
+  background-image: none !important;
+}
+.viewport.theme-rose .win-title-bar {
+  background: linear-gradient(90deg, #800000, #ff8080) !important;
+  color: #fff !important;
+}
+.viewport.theme-highcontrast {
+  background-color: #000000 !important;
+  background-image: none !important;
+}
+.viewport.theme-highcontrast .win-title-bar {
+  background: #ffffff !important;
+  color: #000000 !important;
+}
+.viewport.theme-highcontrast .win-window {
+  border: 2px solid #fff !important;
+}
+.viewport.theme-highcontrast .win-btn {
+  background: #000 !important;
+  color: #fff !important;
+  border-color: #fff !important;
+}
+.viewport.theme-highcontrast .win-inset {
+  border-color: #fff !important;
+}
+.viewport.theme-highcontrast .win-outset {
+  border-color: #fff !important;
+}
+.viewport.theme-highcontrast .win-title-btn {
+  background: #fff !important;
+  color: #000 !important;
+  border: 1px solid #000 !important;
+}
+.viewport.theme-highcontrast * {
+  color: #fff !important;
+  background-color: #000 !important;
+  border-color: #fff !important;
+}
+.viewport.theme-highcontrast .win-title-bar-title {
+  color: #000 !important;
+}
+
+/* Dynamic CRT Screen Filters (VGA, SVGA, Retro, None) */
+.crt-container.filter-none::before {
+  display: none !important;
+}
+.crt-container.filter-none::after {
+  display: none !important;
+}
+.crt-container.filter-vga::before {
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.15) 50%);
+  background-size: 100% 3px;
+}
+.crt-container.filter-svga::before {
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.22) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.05), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.05));
+  background-size: 100% 4px, 6px 100%;
+}
+.crt-container.filter-retro::before {
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.42) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.1), rgba(0, 255, 0, 0.03), rgba(0, 0, 255, 0.1));
+  background-size: 100% 6px, 8px 100%;
+}
+
+
