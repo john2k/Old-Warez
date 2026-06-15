@@ -240,5 +240,6 @@ export const appsRegistry = [
   { id: 'xdcc', title: 'XDCC Catcher v1.2', icon: Icons.Xdcc, defaultWidth: 440, defaultHeight: 330 },
   { id: 'nfogen', title: 'ASCII NFO Gen v1.0', icon: Icons.Nfogen, defaultWidth: 460, defaultHeight: 350 },
   { id: 'nesemu', title: 'NES/SNES Emulator', icon: Icons.Nesemu, defaultWidth: 500, defaultHeight: 380 },
-  { id: 'sfvchecker', title: 'QuickSFV v1.2', icon: Icons.Sfv, defaultWidth: 400, defaultHeight: 300 }
+  { id: 'sfvchecker', title: 'QuickSFV v1.2', icon: Icons.Sfv, defaultWidth: 400, defaultHeight: 300 },
+  { id: 'subseven', title: 'SubSeven Trojan Server v2.1', icon: Icons.Netbus, defaultWidth: 460, defaultHeight: 360 }
 ];

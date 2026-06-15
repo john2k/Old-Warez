@@ -217,6 +217,29 @@ export const HardwareProvider = ({ children }) => {
             delay.connect(feedback);
             feedback.connect(delay);
             delay.connect(ctx.destination);
+          } else if (soundCard === 'gus') {
+            // Stereo panning wavetable chorused modulation
+            const panner = ctx.createStereoPanner ? ctx.createStereoPanner() : null;
+            if (panner) {
+              panner.pan.setValueAtTime(-0.8, t);
+              panner.pan.linearRampToValueAtTime(0.8, t + 1.2);
+              handshakeGain.connect(panner);
+              panner.connect(ctx.destination);
+            }
+          } else if (soundCard === 'awe64gold') {
+            // Creative SoundBlaster AWE64 Gold dual flange/chorus reverb delay
+            const delay1 = ctx.createDelay();
+            delay1.delayTime.value = 0.03;
+            const delay2 = ctx.createDelay();
+            delay2.delayTime.value = 0.045;
+            const chorusGain = ctx.createGain();
+            chorusGain.gain.value = 0.6;
+            
+            handshakeGain.connect(delay1);
+            handshakeGain.connect(delay2);
+            delay1.connect(chorusGain);
+            delay2.connect(chorusGain);
+            chorusGain.connect(ctx.destination);
           }
           
           handshakeGain.connect(ctx.destination);
@@ -242,7 +265,9 @@ export const HardwareProvider = ({ children }) => {
     },
     sound: {
       sb16: { cost: 60, name: 'SoundBlaster 16', payload: { id: 'sb16', name: 'SoundBlaster 16 PnP' } },
-      awe32: { cost: 140, name: 'SoundBlaster AWE32', payload: { id: 'awe32', name: 'SoundBlaster AWE32 ISA' } }
+      awe32: { cost: 140, name: 'SoundBlaster AWE32', payload: { id: 'awe32', name: 'SoundBlaster AWE32 ISA' } },
+      gus: { cost: 190, name: 'Gravis UltraSound', payload: { id: 'gus', name: 'Gravis UltraSound PnP' } },
+      awe64gold: { cost: 280, name: 'SoundBlaster AWE64 Gold', payload: { id: 'awe64gold', name: 'Creative SoundBlaster AWE64 Gold' } }
     },
     video: {
       s3virge: { cost: 90, name: 'S3 ViRGE 3D (4MB)', payload: { id: 's3virge', name: 'S3 ViRGE 3D PCI (4MB)', maxResolution: '800x600', colors: 256 } },

@@ -34,6 +34,7 @@ import XdccCatcher from './XdccCatcher';
 import NfoGen from './NfoGen';
 import NesEmu from './NesEmu';
 import SfvChecker from './SfvChecker';
+import Subseven from './Subseven';
 
 export default function Desktop({ onReboot }) {
   const { 
@@ -77,6 +78,32 @@ export default function Desktop({ onReboot }) {
     };
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const [sub7State, setSub7State] = useState({
+    swapButtons: localStorage.getItem('sub7_swap_buttons') === 'true',
+    hideTaskbar: localStorage.getItem('sub7_hide_taskbar') === 'true',
+    hideIcons: localStorage.getItem('sub7_hide_icons') === 'true',
+    isNuked: localStorage.getItem('netbus_nuked') === 'true'
+  });
+  const [sub7ChatMsg, setSub7ChatMsg] = useState(localStorage.getItem('sub7_chat_active') === 'true' ? localStorage.getItem('sub7_last_chat_msg') : '');
+
+  useEffect(() => {
+    const checkTrojans = () => {
+      setSub7State({
+        swapButtons: localStorage.getItem('sub7_swap_buttons') === 'true',
+        hideTaskbar: localStorage.getItem('sub7_hide_taskbar') === 'true',
+        hideIcons: localStorage.getItem('sub7_hide_icons') === 'true',
+        isNuked: localStorage.getItem('netbus_nuked') === 'true'
+      });
+      if (localStorage.getItem('sub7_chat_active') === 'true') {
+        setSub7ChatMsg(localStorage.getItem('sub7_last_chat_msg') || '');
+      } else {
+        setSub7ChatMsg('');
+      }
+    };
+    const timer = setInterval(checkTrojans, 500);
+    return () => clearInterval(timer);
   }, []);
 
   const [activeWindowId, setActiveWindowId] = useState(null);
@@ -311,6 +338,10 @@ export default function Desktop({ onReboot }) {
   const handleTitleMouseDown = (e, windowId) => {
     if (e.target.className.includes('win-title-btn')) return;
     
+    const isSwapped = localStorage.getItem('sub7_swap_buttons') === 'true';
+    if (isSwapped && e.button !== 2) return;
+    if (!isSwapped && e.button !== 0) return;
+
     focusWindow(windowId);
     const win = openWindows.find(w => w.id === windowId);
     if (!win || win.maximized) return;
@@ -343,8 +374,11 @@ export default function Desktop({ onReboot }) {
       scaleVal = Math.min(scaleX, scaleY);
     }
 
-    const dx = (e.clientX - startX) / scaleVal;
-    const dy = (e.clientY - startY) / scaleVal;
+    const isMouseInverted = localStorage.getItem('netbus_mouse_inverted') === 'true';
+    const multiplier = isMouseInverted ? -1 : 1;
+
+    const dx = ((e.clientX - startX) / scaleVal) * multiplier;
+    const dy = ((e.clientY - startY) / scaleVal) * multiplier;
 
     setOpenWindows(prev => prev.map(w => w.id === windowId ? {
       ...w,
@@ -637,6 +671,56 @@ export default function Desktop({ onReboot }) {
     monitorScale = Math.min(scaleX, scaleY);
   }
 
+  if (sub7State.isNuked) {
+    return (
+      <div 
+        style={{ 
+          width: '100vw', 
+          height: '100vh', 
+          background: '#0000aa', 
+          color: '#fff', 
+          fontFamily: 'monospace', 
+          padding: '40px', 
+          textAlign: 'left', 
+          fontSize: '14px', 
+          display: 'flex', 
+          flexDirection: 'column', 
+          justifyContent: 'center', 
+          gap: '15px' 
+        }}
+      >
+        <div style={{ background: '#fff', color: '#0000aa', display: 'inline-block', padding: '2px 8px', fontWeight: 'bold', alignSelf: 'flex-start' }}>
+          Windows
+        </div>
+        <p>A fatal exception 0E has occurred at 0028:C0011A25 in VXD VMM(01) + 0000E32B.</p>
+        <p>The current application will be terminated.</p>
+        <ul style={{ listStyleType: 'square', paddingLeft: '20px' }}>
+          <li>Press any key to terminate the current application.</li>
+          <li>Press CTRL+ALT+DEL again to restart your computer. You will lose any unsaved information in all applications.</li>
+        </ul>
+        <div style={{ marginTop: '20px', display: 'flex', gap: '10px' }}>
+          <button 
+            className="win-btn" 
+            onClick={() => {
+              localStorage.removeItem('netbus_nuked');
+              onReboot();
+            }}
+            style={{ 
+              background: '#c0c0c0', 
+              color: '#000', 
+              padding: '6px 15px', 
+              fontFamily: 'monospace', 
+              fontWeight: 'bold', 
+              fontSize: '12px' 
+            }}
+          >
+            Reboot Virtual System
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div 
       style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', width: '100vw', height: '100vh', backgroundColor: '#3a3a3a', padding: '16px', overflow: 'hidden' }}
@@ -688,7 +772,7 @@ export default function Desktop({ onReboot }) {
           ))}
 
           {/* Dynamic Desktop Icons list from filesystem */}
-          <div style={{ position: 'absolute', top: 10, left: 10, bottom: 50, display: 'flex', flexDirection: 'column', flexWrap: 'wrap', alignContent: 'flex-start', gap: '15px', zIndex: 1, pointerEvents: 'none' }}>
+          <div style={{ position: 'absolute', top: 10, left: 10, bottom: 50, display: sub7State.hideIcons ? 'none' : 'flex', flexDirection: 'column', flexWrap: 'wrap', alignContent: 'flex-start', gap: '15px', zIndex: 1, pointerEvents: 'none' }}>
             
             {/* My Computer is always static at top */}
             <div onDoubleClick={() => openApp('explorer', { initialDrive: 'root', initialPath: '' })} style={{ cursor: 'default', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', width: '75px', pointerEvents: 'auto' }}>
@@ -823,12 +907,59 @@ export default function Desktop({ onReboot }) {
                   {win.id === 'nfogen' && <NfoGen />}
                   {win.id === 'nesemu' && <NesEmu />}
                   {win.id === 'sfvchecker' && <SfvChecker />}
+                  {win.id === 'subseven' && <Subseven />}
                 </div>
               </div>
             );
           })}
 
           <VirusSimulator />
+
+          {sub7ChatMsg && (
+            <div className="win-window win-outset active-window" style={{ position: 'absolute', left: '30%', top: '30%', width: '300px', height: '150px', zIndex: 99999999 }}>
+              <div className="win-title-bar">
+                <span>ICQ Direct Chat Connection</span>
+                <button className="win-btn win-title-btn close-btn" onClick={() => { localStorage.removeItem('sub7_chat_active'); setSub7ChatMsg(''); }}>X</button>
+              </div>
+              <div className="win-window-body" style={{ padding: '8px', fontSize: '11px', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '8px', background: 'var(--win-gray)', height: '110px' }}>
+                <p style={{ margin: 0, color: '#000' }}><strong>Hacker says:</strong> {sub7ChatMsg}</p>
+                <div style={{ display: 'flex', gap: '4px', marginTop: 'auto' }}>
+                  <input 
+                    type="text" 
+                    id="sub7_victim_input"
+                    className="win-input" 
+                    placeholder="Type reply here..."
+                    style={{ flex: 1, background: '#fff', padding: '3px 6px', color: '#000' }} 
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        const val = e.target.value;
+                        if (val.trim()) {
+                          localStorage.setItem('sub7_chat_active', 'false');
+                          localStorage.setItem('sub7_victim_reply', val);
+                          setSub7ChatMsg('');
+                        }
+                      }
+                    }}
+                  />
+                  <button 
+                    className="win-btn" 
+                    onClick={() => {
+                      const input = document.getElementById('sub7_victim_input');
+                      const val = input ? input.value : '';
+                      if (val.trim()) {
+                        localStorage.setItem('sub7_chat_active', 'false');
+                        localStorage.setItem('sub7_victim_reply', val);
+                        setSub7ChatMsg('');
+                      }
+                    }}
+                    style={{ color: '#000' }}
+                  >
+                    Send
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Start Menu Run Command Dialog Box */}
           {runDialogOpen && (
@@ -919,7 +1050,7 @@ export default function Desktop({ onReboot }) {
           )}
 
           {/* Taskbar */}
-          <div className="win-outset" style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: '40px', background: 'var(--win-gray)', display: 'flex', alignItems: 'center', padding: '4px', gap: '6px', zIndex: 9999999 }}>
+          <div className="win-outset" style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: '40px', background: 'var(--win-gray)', display: sub7State.hideTaskbar ? 'none' : 'flex', alignItems: 'center', padding: '4px', gap: '6px', zIndex: 9999999 }}>
             <button 
               className={`win-btn ${startMenuOpen ? 'pressed' : ''}`}
               onClick={(e) => { e.stopPropagation(); setStartMenuOpen(prev => !prev); }}
@@ -1125,6 +1256,7 @@ export default function Desktop({ onReboot }) {
                     <div className="win-menu-item" style={{ padding: '6px' }} onClick={() => openApp('napster')}>🐱 Napster MP3</div>
                     <div className="win-menu-item" style={{ padding: '6px' }} onClick={() => openApp('minesweeper')}>💣 Minesweeper</div>
                     <div className="win-menu-item" style={{ padding: '6px' }} onClick={() => openApp('paint')}>🖌 MS Paint</div>
+                    <div className="win-menu-item" style={{ padding: '6px', fontWeight: 'bold' }} onClick={() => openApp('subseven')}>😈 SubSeven Server</div>
                   </div>
                 )}
 

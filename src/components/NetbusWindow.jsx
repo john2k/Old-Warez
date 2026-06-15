@@ -2,12 +2,13 @@ import React, { useState, useContext } from 'react';
 import { HardwareContext } from '../context/HardwareContext';
 
 export default function NetbusWindow() {
-  const { completedMissions, playSound } = useContext(HardwareContext);
+  const { completedMissions, playSound, addVirtualFile } = useContext(HardwareContext);
   const [targetIp, setTargetIp] = useState('192.168.10.45');
   const [isConnected, setIsConnected] = useState(false);
   const [log, setLog] = useState(['NetBus 1.70 ready.']);
   const [activeSubTab, setActiveSubTab] = useState('actions'); // actions, scripting
-  
+  const [showScreenshotPreview, setShowScreenshotPreview] = useState(false);
+
   // Scripting editor states
   const [scriptCode, setScriptCode] = useState(`eject_cd;\ninvert_mouse;\nmelt_screen;`);
   const [scriptLog, setScriptLog] = useState(['Trojan Script Editor Ready.']);
@@ -29,15 +30,22 @@ export default function NetbusWindow() {
       if (action === 'Open CD-ROM') {
         setLog(prev => [...prev, `Response: Victim CD-ROM tray opened successfully.`]);
         localStorage.setItem('netbus_cdrom_ejected', 'true');
+        alert('TROJAN PAYLOAD TRIGGERED:\n\nVictim CD-ROM drive bezel tray ejected successfully!');
       } else if (action === 'Invert Mouse') {
         setLog(prev => [...prev, `Response: Victim mouse coordinates inverted.`]);
-        localStorage.setItem('netbus_mouse_inverted', 'true');
+        const current = localStorage.getItem('netbus_mouse_inverted') === 'true';
+        localStorage.setItem('netbus_mouse_inverted', String(!current));
       } else if (action === 'Play Sound') {
-        setLog(prev => [...prev, `Response: Played 'Beep' sound on internal PC Speaker.`]);
+        playSound('beep');
+        setTimeout(() => playSound('beep'), 120);
+        setTimeout(() => playSound('beep'), 240);
+        setLog(prev => [...prev, `Response: Played 'Beep' sound sequence on victim's PC Speaker.`]);
         localStorage.setItem('netbus_audio_played', 'true');
       } else if (action === 'Grab Screenshot') {
+        addVirtualFile('C:', 'Downloads', 'victim_screen.bmp', 450000, 'BITMAP COLOR TABLE DATA\nWIDTH: 640\nHEIGHT: 480\nDEPTH: 8bpp\n\nHacked by NetBus.');
         setLog(prev => [...prev, `Response: Screen capture transferred. Saved to C:\\Downloads\\victim_screen.bmp.`]);
         localStorage.setItem('netbus_screenshot_taken', 'true');
+        setShowScreenshotPreview(true);
       } else if (action === 'Nuke Target') {
         setLog(prev => [...prev, `Response: Sent Blue Screen of Death packet. Victim crashed!`]);
         localStorage.setItem('netbus_nuked', 'true');
@@ -127,9 +135,28 @@ export default function NetbusWindow() {
               </button>
             </div>
 
-            {/* Console logger */}
-            <div className="win-inset" style={{ flex: 1, backgroundColor: '#000', color: '#ff3333', fontFamily: 'monospace', padding: '6px', overflowY: 'auto', fontSize: '11px', textAlign: 'left' }}>
-              {log.map((line, idx) => <p key={idx} style={{ margin: 0 }}>{line}</p>)}
+            {/* Console logger & Screenshot Split */}
+            <div style={{ flex: 1, display: 'flex', gap: '6px', minHeight: 0 }}>
+              <div className="win-inset" style={{ flex: 2, backgroundColor: '#000', color: '#ff3333', fontFamily: 'monospace', padding: '6px', overflowY: 'auto', fontSize: '11px', textAlign: 'left' }}>
+                {log.map((line, idx) => <p key={idx} style={{ margin: 0 }}>{line}</p>)}
+              </div>
+              {showScreenshotPreview && (
+                <div className="win-inset" style={{ flex: 1.2, backgroundColor: '#808080', border: '2px dashed #000', padding: '4px', display: 'flex', flexDirection: 'column', color: '#000', fontSize: '10px', alignItems: 'center', justifyContent: 'center', position: 'relative', minWidth: '110px' }}>
+                  <div style={{ position: 'absolute', top: 0, left: 0, right: 0, background: '#000080', color: '#fff', padding: '2px', fontWeight: 'bold', textAlign: 'center', fontSize: '9px' }}>
+                    SCREENSHOT CAPTURE
+                  </div>
+                  <div style={{ width: '90%', height: '70%', border: '1px solid #000', background: '#008080', marginTop: '14px', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', padding: '2px' }}>
+                    {/* Tiny desktop mockup */}
+                    <div style={{ fontSize: '6px', color: '#fff', position: 'absolute', top: '4px', left: '2px' }}>[My Computer]</div>
+                    <div style={{ fontSize: '7px', color: '#ff0', fontWeight: 'bold', textAlign: 'center', width: '100%', position: 'absolute', top: '15px' }}>HACKED BY NETBUS</div>
+                    <div style={{ width: '100%', height: '8px', background: '#c0c0c0', borderTop: '1px solid #fff', display: 'flex', alignItems: 'center', fontSize: '6px', padding: '1px' }}>
+                      <span style={{ fontWeight: 'bold', borderRight: '1px solid #808080', paddingRight: '2px', marginRight: '2px' }}>Start</span>
+                      <span>12:00</span>
+                    </div>
+                  </div>
+                  <button className="win-btn" onClick={() => setShowScreenshotPreview(false)} style={{ fontSize: '8px', marginTop: '2px', padding: '1px 3px' }}>Close</button>
+                </div>
+              )}
             </div>
           </div>
         </div>
