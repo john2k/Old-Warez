@@ -401,6 +401,7 @@ export default function MircWindow({ onClose }) {
           }
 
           setChannelLines(prev => [...prev, { type: 'system', text: `*** DCC Get of ${dccFile} complete.` }]);
+          localStorage.setItem('dcc_send_completed', 'true');
           playSound('beep');
         }
       }, 100);

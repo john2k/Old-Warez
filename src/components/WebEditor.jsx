@@ -11,8 +11,17 @@ export default function WebEditor() {
       {/* Menu bar */}
       <div className="win-menu-bar">
         <div className="win-menu-item" onClick={() => setPreviewActive(false)}>Code View</div>
-        <div className="win-menu-item" onClick={() => setPreviewActive(true)}>Preview Page</div>
-        <div className="win-menu-item">Help</div>
+        <div className="win-menu-item" onClick={() => {
+          setPreviewActive(true);
+          localStorage.setItem('web_previewed', 'true');
+          if (htmlCode.toLowerCase().includes('hacked') || htmlCode.toLowerCase().includes('deface') || htmlCode.toLowerCase().includes('leet')) {
+            localStorage.setItem('web_defaced', 'true');
+          }
+        }}>Preview Page</div>
+        <div className="win-menu-item" onClick={() => {
+          localStorage.setItem('web_previewed', 'true');
+          alert('HTML document saved successfully!');
+        }}>Save Site</div>
       </div>
 
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '4px' }}>

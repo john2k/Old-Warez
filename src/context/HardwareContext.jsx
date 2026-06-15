@@ -88,7 +88,8 @@ export const HardwareProvider = ({ children }) => {
   const [displaySettings, setDisplaySettings] = useState({
     resolution: '640x480',
     colors: 16,
-    filter: localStorage.getItem('desktop_filter') || 'svga'
+    filter: localStorage.getItem('desktop_filter') || 'svga',
+    fitToScreen: localStorage.getItem('desktop_fit_to_screen') !== 'false'
   });
 
   const [desktopTheme, setDesktopTheme] = useState(localStorage.getItem('desktop_theme') || 'default');

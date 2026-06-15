@@ -42,7 +42,7 @@ export default function BbsTerminal() {
         '       WELCOME TO THE KEEP BBS - RETRO SCENE       ',
         '      Running on Wildcat! BBS v5.0, since 1994      ',
         '==================================================',
-        'Commands: [F]iles, [D]oor Games, [O]ffline, [H]elp',
+        'Commands: [F]iles, [D]oor Games, [M]essage Board, [O]ffline, [H]elp',
         'BBS_MAIN_MENU>'
       ]);
     }, 3000);
@@ -53,7 +53,7 @@ export default function BbsTerminal() {
       const val = inputVal.trim().toLowerCase();
       if (!val) return;
 
-      const lines = [...terminalLines, `BBS_SHELL&gt; ${inputVal}`];
+      const lines = [...terminalLines, `BBS_SHELL> ${inputVal}`];
 
       if (connectionState === 'disconnected') {
         if (val.startsWith('dial ')) {
@@ -78,11 +78,21 @@ export default function BbsTerminal() {
           lines.push('2. TradeWars 2002 - Node 2');
           lines.push('Select [1-2] or [B]ack:');
           setBbsMenu('games');
+        } else if (val === 'm' || val === 'message') {
+          lines.push('');
+          lines.push('--- KEEP BBS MESSAGE BOARD ---');
+          lines.push('Type a message to post to the underground scene board (e.g. "rzr is back"):');
+          setBbsMenu('post-message');
         } else if (val === 'o' || val === 'offline' || val === 'exit') {
           setConnectionState('disconnected');
           setBbsMenu('main');
           lines.push('*** Carrier lost. Connection closed.');
           lines.push('A:\\>');
+        } else if (bbsMenu === 'post-message') {
+          localStorage.setItem('bbs_message_posted', 'true');
+          lines.push(`SUCCESS: Message "${inputVal}" posted to node!`);
+          lines.push('Returning to Main Menu.');
+          setBbsMenu('main');
         } else if (bbsMenu === 'file-area') {
           if (val === '1') {
             lines.push('STATUS:> Initiating ZMODEM download of wz62-dgt.rar...');

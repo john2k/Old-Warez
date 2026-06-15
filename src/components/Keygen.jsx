@@ -104,6 +104,10 @@ export default function Keygen({ targetAppName, onClose }) {
     return () => stopChiptune();
   }, [musicPlaying, hardware.sound.id]);
 
+  useEffect(() => {
+    localStorage.setItem('keygen_opened', 'true');
+  }, []);
+
   // Horizontal scroller tick
   useEffect(() => {
     const timer = setInterval(() => {
@@ -137,6 +141,8 @@ export default function Keygen({ targetAppName, onClose }) {
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(serial);
+    localStorage.setItem('starcraft_key_copied', 'true');
+    localStorage.setItem('winzip_registered', 'true');
     alert('Serial copied to Windows Clipboard!');
   };
 

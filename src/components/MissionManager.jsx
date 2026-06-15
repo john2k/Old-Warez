@@ -1030,12 +1030,178 @@ export default function MissionManager() {
       check: () => isInternetConnected === false
     },
     {
-      id: 'm110_campaign_claimed',
-      title: '110. Reach Elite Warez Legend status',
+      id: 'm110_quick_sfv_run',
+      title: '110. Verify Scene Split Archive Integrity (QuickSFV)',
+      difficulty: 'Easy',
+      reward: 60,
+      description: 'Open the QuickSFV utility and scan/verify the CRC32 checksum file of any downloaded split scene releases.',
+      check: () => Object.keys(localStorage).some(k => k.startsWith('sfv_verified_') && localStorage.getItem(k) === 'true')
+    },
+    {
+      id: 'm111_winzip_unpack',
+      title: '111. Extract Game Files (WinZip)',
+      difficulty: 'Easy',
+      reward: 70,
+      description: 'Use WinZip to extract game archives to C:\\GAMES\\ after a successful integrity check.',
+      check: () => {
+        const games = fileSystem['C:']?.files?.['GAMES']?.files || {};
+        return Object.keys(games).length > 0;
+      }
+    },
+    {
+      id: 'm112_keygen_register',
+      title: '112. Launch Scene Keygen Utility',
+      difficulty: 'Easy',
+      reward: 50,
+      description: 'Boot up a chiptune Keygen utility from the Start Menu -> Programs -> Crack Utilities.',
+      check: () => localStorage.getItem('keygen_opened') === 'true'
+    },
+    {
+      id: 'm113_mirc_fserv_trigger',
+      title: '113. Intercept DCC Chat File Server Invitation',
+      difficulty: 'Easy',
+      reward: 60,
+      description: 'Connect to IRC and trigger an Fserv session by typing "!games" inside mIRC channel #warez-classic.',
+      check: () => localStorage.getItem('fserv_triggered') === 'true'
+    },
+    {
+      id: 'm114_winamp_millencolin',
+      title: '114. Listen to Millencolin Release via Winamp',
+      difficulty: 'Easy',
+      reward: 50,
+      description: 'Load track "Millencolin - No Cigar" in Winamp from downloaded audio collections.',
+      check: () => localStorage.getItem('winamp_playing') === 'true'
+    },
+    {
+      id: 'm115_deface_isp_web',
+      title: '115. Deface Local ISP Web Server Index Page',
+      difficulty: 'Medium',
+      reward: 120,
+      description: 'Use the WebEditor to create an HTML page containing "HACKED" or "DEFACED" or "LEET" and preview it to test design layout.',
+      check: () => localStorage.getItem('web_defaced') === 'true'
+    },
+    {
+      id: 'm116_netbus_screenshot',
+      title: '116. Grab Remote Desktop Screenshot via NetBus',
+      difficulty: 'Easy',
+      reward: 60,
+      description: 'Connect to the Remote Target IP using NetBus and click the "Grab Screenshot" button to transfer target system viewport frames.',
+      check: () => localStorage.getItem('netbus_screenshot_taken') === 'true'
+    },
+    {
+      id: 'm117_netbus_audio',
+      title: '117. Send Internal Speaker Wave Payload via NetBus',
+      difficulty: 'Easy',
+      reward: 50,
+      description: 'Trigger the "Play Sound" command on the remote target host through your active NetBus connection.',
+      check: () => localStorage.getItem('netbus_audio_played') === 'true'
+    },
+    {
+      id: 'm118_netbus_mouse',
+      title: '118. Invert Victim Mouse Coordinates via NetBus',
+      difficulty: 'Easy',
+      reward: 50,
+      description: 'Select the "Invert Mouse" option inside the NetBus remote actions menu to flip remote desktop pointer axes.',
+      check: () => localStorage.getItem('netbus_mouse_inverted') === 'true'
+    },
+    {
+      id: 'm119_netbus_cdrom',
+      title: '119. Hijack Remote CD-ROM Optical Drive Bezel',
+      difficulty: 'Easy',
+      reward: 60,
+      description: 'Remotely eject the target machine\'s physical CD-ROM disc tray by executing the open CD-ROM command in NetBus.',
+      check: () => localStorage.getItem('netbus_cdrom_ejected') === 'true'
+    },
+    {
+      id: 'm120_nfogen_compile',
+      title: '120. Draft Scene Release NFO File (NFOGen)',
+      difficulty: 'Easy',
+      reward: 60,
+      description: 'Use the NFOGen utility to draft and compile a release description ASCII banner file.',
+      check: () => localStorage.getItem('nfo_generated') === 'true'
+    },
+    {
+      id: 'm121_napster_dual_download',
+      title: '121. Hoard MP3 Audio Collections (Napster)',
+      difficulty: 'Easy',
+      reward: 80,
+      description: 'Search for and download at least two separate scene MP3 audio tracks via Napster peer connection nodes.',
+      check: () => {
+        const dl = fileSystem['C:']?.files?.['Downloads']?.files || {};
+        return Object.keys(dl).filter(k => k.toLowerCase().endsWith('.mp3')).length >= 2;
+      }
+    },
+    {
+      id: 'm122_bbs_forum_post',
+      title: '122. Post Underground Alert on BBS Message Board',
+      difficulty: 'Easy',
+      reward: 70,
+      description: 'Type "m" inside the connected Keep BBS node to access the Message Board and post a message to the underground forum.',
+      check: () => localStorage.getItem('bbs_message_posted') === 'true'
+    },
+    {
+      id: 'm123_cdrwin_4x_burn',
+      title: '123. Burn Audio Compilation CD at 4x Speed (CDRWin)',
+      difficulty: 'Medium',
+      reward: 120,
+      description: 'Burn a compilation CD inside CDRWin setting writing speed slider to 4x (ensure you have the buffer underrun patch).',
+      check: () => localStorage.getItem('cdrwin_burned_4x') === 'true'
+    },
+    {
+      id: 'm124_dcc_send_recv',
+      title: '124. Fetch Binary Warez Release over mIRC DCC GET',
+      difficulty: 'Easy',
+      reward: 80,
+      description: 'Trigger Fserv and use the "get" command inside DCC Chat shell to receive files over mIRC DCC Send dialog.',
+      check: () => localStorage.getItem('dcc_send_completed') === 'true'
+    },
+    {
+      id: 'm125_infect_prof_grades',
+      title: '125. Infiltrate School Registry Database logs',
+      difficulty: 'Hard',
+      reward: 200,
+      description: 'Use a trojan payload or grade editor script to successfully bypass access restrictions and modify school database files.',
+      check: () => localStorage.getItem('netbus_script_run') === 'true' || localStorage.getItem('netbus_nuked') === 'true'
+    },
+    {
+      id: 'm126_crack_starcraft_key',
+      title: '126. Copy Registered Serial Codes (Keygen)',
+      difficulty: 'Easy',
+      reward: 60,
+      description: 'Generate a program registration key inside the Keygen app and copy it to the clipboard.',
+      check: () => localStorage.getItem('starcraft_key_copied') === 'true' || localStorage.getItem('winzip_registered') === 'true'
+    },
+    {
+      id: 'm127_nfo_viewer_open',
+      title: '127. Audit Release NFO ASCII Graphics (NFO Viewer)',
+      difficulty: 'Easy',
+      reward: 50,
+      description: 'Launch the NFO Viewer application from the Start Menu to inspect release greetz and information.',
+      check: () => localStorage.getItem('nfo_viewer_opened') === 'true'
+    },
+    {
+      id: 'm128_icq_message_reply',
+      title: '128. Send ICQ Peer-to-Peer Message',
+      difficulty: 'Easy',
+      reward: 50,
+      description: 'Open ICQ, choose a contact (e.g. Mike or Dave) and send them a chat message.',
+      check: () => localStorage.getItem('icq_message_sent') === 'true'
+    },
+    {
+      id: 'm129_clean_worms',
+      title: '129. Scan and Purge Active Malware Infections',
+      difficulty: 'Medium',
+      reward: 120,
+      description: 'Run F-Prot scanning systems to target active infected memory addresses and execute cleanup.',
+      check: () => localStorage.getItem('system_cleaned') === 'true'
+    },
+    {
+      id: 'm130_campaign_claimed',
+      title: '130. Reach Elite Warez Legend status',
       difficulty: 'Expert',
       reward: 1000,
-      description: 'Claim rewards for at least 100 other task campaign missions in this checklist!',
-      check: () => completedMissions.length >= 100
+      description: 'Claim rewards for at least 120 other task campaign missions in this checklist!',
+      check: () => completedMissions.length >= 120
     }
   ];
 
@@ -1063,7 +1229,7 @@ export default function MissionManager() {
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', backgroundColor: 'var(--win-gray)', padding: '10px', fontSize: '12px', color: '#000', fontFamily: 'var(--font-win)' }}>
       {/* Title Header */}
       <div style={{ background: '#000080', color: '#fff', padding: '6px', fontWeight: 'bold', display: 'flex', justifyContent: 'space-between', borderBottom: '2px solid var(--win-dark-gray)' }}>
-        <span>Retro Task Campaign Manager (110 Missions)</span>
+        <span>Retro Task Campaign Manager (130 Missions)</span>
         <span>Completed: {completedMissions.length} / {missions.length}</span>
       </div>
 

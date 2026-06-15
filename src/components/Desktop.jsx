@@ -69,6 +69,16 @@ export default function Desktop({ onReboot }) {
   } = useContext(HardwareContext);
 
   const [openWindows, setOpenWindows] = useState([]); // [{ id, title, zIndex, x, y, width, height, minimized, maximized }]
+  const [windowSize, setWindowSize] = useState({ width: window.innerWidth, height: window.innerHeight });
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowSize({ width: window.innerWidth, height: window.innerHeight });
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const [activeWindowId, setActiveWindowId] = useState(null);
   const [startMenuOpen, setStartMenuOpen] = useState(false);
   
@@ -321,8 +331,20 @@ export default function Desktop({ onReboot }) {
     if (!dragRef.current) return;
     const { windowId, startX, startY, origX, origY } = dragRef.current;
     
-    const dx = e.clientX - startX;
-    const dy = e.clientY - startY;
+    const [resW, resH] = displaySettings.resolution.split('x');
+    let scaleVal = 1;
+    if (displaySettings.fitToScreen !== false) {
+      const bezelW = 56 + 32;
+      const bezelH = 68 + 32;
+      const targetW = Number(resW) + bezelW;
+      const targetH = Number(resH) + bezelH;
+      const scaleX = window.innerWidth / targetW;
+      const scaleY = window.innerHeight / targetH;
+      scaleVal = Math.min(scaleX, scaleY);
+    }
+
+    const dx = (e.clientX - startX) / scaleVal;
+    const dy = (e.clientY - startY) / scaleVal;
 
     setOpenWindows(prev => prev.map(w => w.id === windowId ? {
       ...w,
@@ -604,6 +626,17 @@ export default function Desktop({ onReboot }) {
     height: `${resHeight}px`
   };
 
+  let monitorScale = 1;
+  if (displaySettings.fitToScreen !== false) {
+    const bezelWidth = 56 + 32;
+    const bezelHeight = 68 + 32;
+    const targetW = Number(resWidth) + bezelWidth;
+    const targetH = Number(resHeight) + bezelHeight;
+    const scaleX = windowSize.width / targetW;
+    const scaleY = windowSize.height / targetH;
+    monitorScale = Math.min(scaleX, scaleY);
+  }
+
   return (
     <div 
       style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', width: '100vw', height: '100vh', backgroundColor: '#3a3a3a', padding: '16px', overflow: 'hidden' }}
@@ -621,7 +654,9 @@ export default function Desktop({ onReboot }) {
           background: '#000', 
           display: 'flex', 
           flexDirection: 'column',
-          position: 'relative'
+          position: 'relative',
+          transform: `scale(${monitorScale})`,
+          transformOrigin: 'center center'
         }}
       >
         

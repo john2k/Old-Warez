@@ -1,6 +1,10 @@
 import React from 'react';
 
 export default function NfoViewer({ nfoContent, onClose }) {
+  React.useEffect(() => {
+    localStorage.setItem('nfo_viewer_opened', 'true');
+  }, []);
+
   const defaultNfo = `
    ▄████████  ▄██████▄   ▄██████▄  ████████▄  ███    █▄  
   ███    ███ ███    ███ ███    ███ ███    ███ ███    ███ 

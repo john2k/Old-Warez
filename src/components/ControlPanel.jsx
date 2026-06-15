@@ -88,12 +88,19 @@ export function ControlPanelDisplay() {
   const [selectedWallpaper, setSelectedWallpaper] = useState(localStorage.getItem('desktop_wallpaper') || 'teal');
   const [selectedRes, setSelectedRes] = useState(displaySettings.resolution);
   const [selectedFilter, setSelectedFilter] = useState(displaySettings.filter || 'svga');
+  const [selectedFitToScreen, setSelectedFitToScreen] = useState(displaySettings.fitToScreen !== false);
 
   const handleApply = () => {
     playSound('beep');
-    setDisplaySettings(prev => ({ ...prev, resolution: selectedRes, filter: selectedFilter }));
+    setDisplaySettings(prev => ({ 
+      ...prev, 
+      resolution: selectedRes, 
+      filter: selectedFilter, 
+      fitToScreen: selectedFitToScreen 
+    }));
     localStorage.setItem('desktop_wallpaper', selectedWallpaper);
     localStorage.setItem('desktop_filter', selectedFilter);
+    localStorage.setItem('desktop_fit_to_screen', String(selectedFitToScreen));
     
     // Sync to hardware.video.resolution for resolution missions (m21, m22)
     setHardware(prev => ({
@@ -160,6 +167,12 @@ export function ControlPanelDisplay() {
                       {res} {res === '640x480' ? '(VGA)' : res === '800x600' ? '(SVGA)' : '(High Color)'}
                     </label>
                   ))}
+                  <div style={{ borderTop: '1px dashed #ccc', marginTop: '4px', paddingTop: '4px' }}>
+                    <label style={{ display: 'flex', gap: '6px', alignItems: 'center', fontWeight: 'bold' }}>
+                      <input type="checkbox" checked={selectedFitToScreen} onChange={(e) => setSelectedFitToScreen(e.target.checked)} />
+                      Scale/Fit to Screen
+                    </label>
+                  </div>
                 </div>
               </div>
 

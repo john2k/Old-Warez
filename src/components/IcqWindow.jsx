@@ -52,6 +52,7 @@ export default function IcqWindow() {
         { sender: 'You', text: messageText }
       ]
     }));
+    localStorage.setItem('icq_message_sent', 'true');
     
     // Simple bot reply logic
     const userText = messageText.toLowerCase();

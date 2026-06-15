@@ -28,12 +28,16 @@ export default function NetbusWindow() {
     setTimeout(() => {
       if (action === 'Open CD-ROM') {
         setLog(prev => [...prev, `Response: Victim CD-ROM tray opened successfully.`]);
-      } else if (action === 'Flip Screen') {
-        setLog(prev => [...prev, `Response: Screen rotated 180 degrees.`]);
+        localStorage.setItem('netbus_cdrom_ejected', 'true');
+      } else if (action === 'Invert Mouse') {
+        setLog(prev => [...prev, `Response: Victim mouse coordinates inverted.`]);
+        localStorage.setItem('netbus_mouse_inverted', 'true');
       } else if (action === 'Play Sound') {
         setLog(prev => [...prev, `Response: Played 'Beep' sound on internal PC Speaker.`]);
-      } else if (action === 'Matrix Text') {
-        setLog(prev => [...prev, `Response: Falling matrix characters triggered on target desktop.`]);
+        localStorage.setItem('netbus_audio_played', 'true');
+      } else if (action === 'Grab Screenshot') {
+        setLog(prev => [...prev, `Response: Screen capture transferred. Saved to C:\\Downloads\\victim_screen.bmp.`]);
+        localStorage.setItem('netbus_screenshot_taken', 'true');
       } else if (action === 'Nuke Target') {
         setLog(prev => [...prev, `Response: Sent Blue Screen of Death packet. Victim crashed!`]);
         localStorage.setItem('netbus_nuked', 'true');
@@ -99,9 +103,9 @@ export default function NetbusWindow() {
           <div className="win-outset" style={{ width: '130px', padding: '6px', display: 'flex', flexDirection: 'column', gap: '6px', background: '#ccc' }}>
             <strong>Fun Actions:</strong>
             <button className="win-btn" onClick={() => triggerAction('Open CD-ROM')} disabled={!isConnected}>Open CD-ROM</button>
-            <button className="win-btn" onClick={() => triggerAction('Flip Screen')} disabled={!isConnected}>Flip Screen</button>
+            <button className="win-btn" onClick={() => triggerAction('Invert Mouse')} disabled={!isConnected}>Invert Mouse</button>
             <button className="win-btn" onClick={() => triggerAction('Play Sound')} disabled={!isConnected}>Play Sound</button>
-            <button className="win-btn" onClick={() => triggerAction('Matrix Text')} disabled={!isConnected}>Matrix Text</button>
+            <button className="win-btn" onClick={() => triggerAction('Grab Screenshot')} disabled={!isConnected}>Grab Screenshot</button>
             <button className="win-btn" onClick={() => triggerAction('Nuke Target')} disabled={!isConnected} style={{ color: 'red', fontWeight: 'bold' }}>Nuke Target</button>
           </div>
 

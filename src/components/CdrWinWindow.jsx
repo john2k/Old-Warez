@@ -90,6 +90,9 @@ export default function CdrWinWindow() {
           
           // Eject/Burn Success Session Flag
           localStorage.setItem('burned_cd_tracks', JSON.stringify(selectedTracks));
+          if (burnSpeed === 4) {
+            localStorage.setItem('cdrwin_burned_4x', 'true');
+          }
           return 100;
         }
 
