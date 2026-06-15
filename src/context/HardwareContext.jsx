@@ -142,6 +142,19 @@ export const HardwareProvider = ({ children }) => {
         gain.connect(ctx.destination);
         osc.start();
         osc.stop(ctx.currentTime + 0.16);
+      } else if (type === 'icq') {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(320, ctx.currentTime);
+        osc.frequency.setValueAtTime(320, ctx.currentTime + 0.08);
+        osc.frequency.exponentialRampToValueAtTime(700, ctx.currentTime + 0.22);
+        gain.gain.setValueAtTime(0.1, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.25);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.26);
       } else if (type === 'floppy') {
         setFloppyLedActive(true);
         setTimeout(() => setFloppyLedActive(false), 500);
@@ -420,6 +433,27 @@ export const HardwareProvider = ({ children }) => {
     }
   };
 
+  const [icqNotifications, setIcqNotifications] = useState([]);
+
+  const showIcqNotification = (text, type = 'system') => {
+    playSound('icq');
+    const newNotif = {
+      id: Date.now() + Math.random(),
+      text,
+      type
+    };
+    setIcqNotifications(prev => [...prev, newNotif]);
+    setTimeout(() => {
+      setIcqNotifications(prev => prev.filter(n => n.id !== newNotif.id));
+    }, 7000);
+  };
+
+  useEffect(() => {
+    window.alert = (message) => {
+      showIcqNotification(message);
+    };
+  }, []);
+
   return (
     <HardwareContext.Provider value={{
       credits,
@@ -465,7 +499,9 @@ export const HardwareProvider = ({ children }) => {
       audioCtxRef,
       resetGame,
       generateSaveData,
-      loadSaveData
+      loadSaveData,
+      icqNotifications,
+      showIcqNotification
     }}>
       {children}
     </HardwareContext.Provider>

@@ -66,7 +66,8 @@ export default function Desktop({ onReboot }) {
     setFloppyLedActive,
     fileSystem,
     setFileSystem,
-    completedMissions
+    completedMissions,
+    icqNotifications
   } = useContext(HardwareContext);
 
   const [openWindows, setOpenWindows] = useState([]); // [{ id, title, zIndex, x, y, width, height, minimized, maximized }]
@@ -1048,6 +1049,37 @@ export default function Desktop({ onReboot }) {
               <div className="win-menu-item" style={{ padding: '6px', color: 'red' }} onClick={() => handleDeleteDesktopItem(iconContextMenu.name)}>Delete</div>
             </div>
           )}
+
+          {/* ICQ Notifications Stack */}
+          <div style={{ position: 'absolute', bottom: '50px', right: '10px', display: 'flex', flexDirection: 'column', gap: '6px', zIndex: 99999999, pointerEvents: 'auto' }}>
+            {icqNotifications.map(notif => (
+              <div 
+                key={notif.id}
+                className="win-window win-outset active-window"
+                style={{ 
+                  width: '240px', 
+                  minHeight: '80px', 
+                  boxShadow: '2px 2px 10px rgba(0,0,0,0.5)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  background: 'var(--win-gray)'
+                }}
+              >
+                <div className="win-title-bar" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '2px 6px', background: '#000080', color: '#fff' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <span style={{ color: '#0f0', textShadow: '0 0 2px #fff', fontWeight: 'bold' }}>🌼</span>
+                    <span style={{ fontSize: '10px', fontWeight: 'bold', fontFamily: 'monospace' }}>ICQ System Notice</span>
+                  </div>
+                </div>
+                <div className="win-window-body" style={{ padding: '6px', fontSize: '10px', color: '#000', display: 'flex', gap: '6px', alignItems: 'flex-start', flex: 1, overflow: 'hidden' }}>
+                  <span style={{ fontSize: '16px' }}>✉️</span>
+                  <div style={{ wordBreak: 'break-word', overflowY: 'auto', maxHeight: '60px', flex: 1, fontFamily: 'monospace', textAlign: 'left' }}>
+                    {notif.text}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
 
           {/* Taskbar */}
           <div className="win-outset" style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: '40px', background: 'var(--win-gray)', display: sub7State.hideTaskbar ? 'none' : 'flex', alignItems: 'center', padding: '4px', gap: '6px', zIndex: 9999999 }}>
