@@ -73,6 +73,18 @@ export default function Desktop({ onReboot }) {
   const [openWindows, setOpenWindows] = useState([]); // [{ id, title, zIndex, x, y, width, height, minimized, maximized }]
   const [windowSize, setWindowSize] = useState({ width: window.innerWidth, height: window.innerHeight });
 
+  const [resWidth, resHeight] = displaySettings.resolution.split('x');
+  let monitorScale = 1;
+  if (displaySettings.fitToScreen !== false) {
+    const bezelWidth = 56 + 32;
+    const bezelHeight = 68 + 32;
+    const targetW = Number(resWidth) + bezelWidth;
+    const targetH = Number(resHeight) + bezelHeight;
+    const scaleX = windowSize.width / targetW;
+    const scaleY = windowSize.height / targetH;
+    monitorScale = Math.min(scaleX, scaleY);
+  }
+
   useEffect(() => {
     const handleResize = () => {
       setWindowSize({ width: window.innerWidth, height: window.innerHeight });
@@ -518,13 +530,29 @@ export default function Desktop({ onReboot }) {
 
   const handleRightClick = (e) => {
     e.preventDefault();
-    setContextMenu({ x: e.clientX, y: e.clientY });
+    const crtContainer = document.querySelector('.crt-container');
+    if (crtContainer) {
+      const rect = crtContainer.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / monitorScale;
+      const y = (e.clientY - rect.top) / monitorScale;
+      setContextMenu({ x, y });
+    } else {
+      setContextMenu({ x: e.clientX, y: e.clientY });
+    }
   };
 
   const handleIconRightClick = (e, name) => {
     e.preventDefault();
     e.stopPropagation();
-    setIconContextMenu({ x: e.clientX, y: e.clientY, name });
+    const crtContainer = document.querySelector('.crt-container');
+    if (crtContainer) {
+      const rect = crtContainer.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / monitorScale;
+      const y = (e.clientY - rect.top) / monitorScale;
+      setIconContextMenu({ x, y, name });
+    } else {
+      setIconContextMenu({ x: e.clientX, y: e.clientY, name });
+    }
   };
 
   // Create folder inside virtual C:\Desktop
@@ -655,22 +683,10 @@ export default function Desktop({ onReboot }) {
   };
 
   const desktopItems = fileSystem['C:']?.files?.['Desktop']?.files || {};
-  const [resWidth, resHeight] = displaySettings.resolution.split('x');
   const resStyle = {
     width: `${resWidth}px`,
     height: `${resHeight}px`
   };
-
-  let monitorScale = 1;
-  if (displaySettings.fitToScreen !== false) {
-    const bezelWidth = 56 + 32;
-    const bezelHeight = 68 + 32;
-    const targetW = Number(resWidth) + bezelWidth;
-    const targetH = Number(resHeight) + bezelHeight;
-    const scaleX = windowSize.width / targetW;
-    const scaleY = windowSize.height / targetH;
-    monitorScale = Math.min(scaleX, scaleY);
-  }
 
   if (sub7State.isNuked) {
     return (
@@ -736,7 +752,7 @@ export default function Desktop({ onReboot }) {
           borderBottomWidth: '40px',
           borderRadius: '12px', 
           boxShadow: 'inset 0 0 10px #000, 10px 10px 30px rgba(0,0,0,0.6)', 
-          background: '#000', 
+          background: '#dcdad5', 
           display: 'flex', 
           flexDirection: 'column',
           position: 'relative',
