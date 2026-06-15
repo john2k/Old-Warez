@@ -866,6 +866,7 @@ export default function Desktop({ onReboot }) {
                   zIndex: win.zIndex
                 }}
                 onClick={(e) => { e.stopPropagation(); focusWindow(win.id); }}
+                onContextMenu={(e) => e.stopPropagation()}
               >
                 {/* Header */}
                 <div 
@@ -1011,6 +1012,7 @@ export default function Desktop({ onReboot }) {
               className="win-window win-outset" 
               style={{ position: 'absolute', left: contextMenu.x - 10, top: contextMenu.y - 10, width: '160px', zIndex: 999999, padding: '2px', fontFamily: 'var(--font-win)', fontSize: '11px', color: '#000' }}
               onClick={(e) => e.stopPropagation()}
+              onContextMenu={(e) => e.stopPropagation()}
             >
               <div className="win-menu-item" style={{ padding: '4px 8px', display: 'flex', justifyContent: 'space-between', position: 'relative' }} onMouseEnter={() => setHoverContextSubMenu('view')} onMouseLeave={() => setHoverContextSubMenu(null)}>
                 <span>👁️ View</span>
@@ -1060,7 +1062,7 @@ export default function Desktop({ onReboot }) {
 
           {/* Icon Right-Click Context Menu */}
           {iconContextMenu && (
-            <div className="win-window win-outset" style={{ position: 'absolute', left: iconContextMenu.x, top: iconContextMenu.y, width: '120px', zIndex: 999999, padding: '2px' }}>
+            <div className="win-window win-outset" style={{ position: 'absolute', left: iconContextMenu.x, top: iconContextMenu.y, width: '120px', zIndex: 999999, padding: '2px' }} onContextMenu={(e) => e.stopPropagation()}>
               <div className="win-menu-item" style={{ padding: '6px' }} onClick={() => handleStartRename(iconContextMenu.name)}>Rename</div>
               <div className="win-menu-item" style={{ padding: '6px', color: 'red' }} onClick={() => handleDeleteDesktopItem(iconContextMenu.name)}>Delete</div>
             </div>
@@ -1098,7 +1100,7 @@ export default function Desktop({ onReboot }) {
           </div>
 
           {/* Taskbar */}
-          <div className="win-outset" style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: '40px', background: 'var(--win-gray)', display: sub7State.hideTaskbar ? 'none' : 'flex', alignItems: 'center', padding: '4px', gap: '6px', zIndex: 9999999 }}>
+          <div className="win-outset" style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: '40px', background: 'var(--win-gray)', display: sub7State.hideTaskbar ? 'none' : 'flex', alignItems: 'center', padding: '4px', gap: '6px', zIndex: 9999999 }} onContextMenu={(e) => e.stopPropagation()}>
             <button 
               className={`win-btn ${startMenuOpen ? 'pressed' : ''}`}
               onClick={(e) => { e.stopPropagation(); setStartMenuOpen(prev => !prev); }}
